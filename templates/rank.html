@@ -1,0 +1,135 @@
+{% extends "layout.html" %}
+{% block header %}
+<style>
+.logo p{
+  height: 180px;
+  line-height: 180px;
+}
+.hcl-search-box{
+  padding: 0;
+}
+
+
+.hcl-main-box{
+  background: #fff;
+  margin-top: 30px;
+  padding: 2em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  color: #666;
+}
+
+.hcl-result-list li:hover p{
+  /*background: #fcfcfc;*/
+  color: #333;
+}
+.hcl-result-list li:hover i{
+  color: #39f;
+}
+.hcl-result-list li p{
+  margin: 0;
+  cursor: pointer;
+}
+.hcl-result-list li b{
+  color: #393;
+  font-size: 1.2em;
+}
+.hcl-result-list li i{
+  float: right;
+}
+
+.hcl-item-box{
+  margin: -16px;
+  margin-top: 5px;
+  padding: 15px 35px;
+}
+
+.hcl-item-box span{
+  border: 1px #39f solid;
+  margin: -1px -1px 0 0;
+  display: inline-block;
+  width: 9em;
+  text-align: center;
+  line-height: 3em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  /* word-break: break-all; */
+  overflow: hidden;
+  vertical-align: top;
+}
+</style>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="hcl-main-box col-sm-8 col-sm-offset-2">
+
+  {% if KeyWord %}
+    <ul class="list-group hcl-result-list" id="result-list">
+      <p>应用<b>"{{AppName}}"</b>在关键词<b>"{{KeyWord}}"</b>结果的排名情况如下：</p>
+      {% if result_rank %}
+          {% for item in result_rank %}
+          <li class="list-group-item" title="点击查看详情" data-key="{{item.Key}}" data-keyword="{{item.KeyWord}}">
+            <p>{% if item.Rank %} {{item.Store}}：<b>{{item.Rank}}</b> {% else %}在应用商店"{{item.Store}}"中未找到相关结果 {% endif %}
+            <i class="glyphicon glyphicon-chevron-down"></i></p>
+          </li>
+          {% endfor %}
+      {% endif %}
+    </ul>
+
+  {% else %}
+            请先输入关键字再查看结果
+  {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+
+{% block scripts %}
+  <script type="text/javascript">
+
+    $(function(){
+      $("#result-list li p").click(function(){
+        var item = $( this ).parent("li");
+        var Key = item.data("key");
+        var KeyWord = item.data("keyword");
+        var Url="/api/get50?Key="+Key+"&KeyWord="+KeyWord;
+
+        var item_active = $("#result-list li .hcl-item-box").not( item.find("div") );
+        item_active.hide();
+
+        if( item.find("div").length<1 ){
+          var box = $("<div class='hcl-item-box'>");
+          item.append( box );
+          $.ajax({
+            "url":Url,
+            "dataType":"json",
+            "beforeSend":function(){
+              box.text("数据正努力加载中……");
+            },
+            "success":function(data,textStatus,jqXHR){
+              box.text("");
+              $( data ).each( function(i,v){
+                box.append( $('<span title="'+v+'">').text( v ) );
+              });
+            },
+            "error":function(){
+              box.text("数据加载超时");
+              setTimeout(function(){
+                box.remove();
+              },3000);
+            }
+          });
+        }else{
+          item.find(".hcl-item-box").toggle();
+        }
+
+
+
+      });
+    });
+  </script>
+{% endblock %}

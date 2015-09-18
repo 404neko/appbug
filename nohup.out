@@ -1,0 +1,22 @@
+ * Running on http://appbug.cn:80/ (Press CTRL+C to quit)
+Traceback (most recent call last):
+  File "plweb.py", line 161, in <module>
+    app.run(host='appbug.cn',port=80,threaded=True,debug=True)
+  File "/usr/local/lib/python2.7/dist-packages/Flask-0.10.1-py2.7.egg/flask/app.py", line 772, in run
+    run_simple(host, port, self, **options)
+  File "/usr/local/lib/python2.7/dist-packages/Werkzeug-0.10.4-py2.7.egg/werkzeug/serving.py", line 618, in run_simple
+    test_socket.bind((hostname, port))
+  File "/usr/lib/python2.7/socket.py", line 224, in meth
+    return getattr(self._sock,name)(*args)
+socket.error: [Errno 98] Address already in use
+ * Running on http://appbug.cn:80/ (Press CTRL+C to quit)
+Traceback (most recent call last):
+  File "plweb.py", line 161, in <module>
+    app.run(host='appbug.cn',port=80,threaded=True,debug=True)
+  File "/usr/local/lib/python2.7/dist-packages/Flask-0.10.1-py2.7.egg/flask/app.py", line 772, in run
+    run_simple(host, port, self, **options)
+  File "/usr/local/lib/python2.7/dist-packages/Werkzeug-0.10.4-py2.7.egg/werkzeug/serving.py", line 618, in run_simple
+    test_socket.bind((hostname, port))
+  File "/usr/lib/python2.7/socket.py", line 224, in meth
+    return getattr(self._sock,name)(*args)
+socket.error: [Errno 98] Address already in use

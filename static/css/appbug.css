@@ -1,0 +1,85 @@
+*{
+  transition: all 0.5s;
+}
+.navbar-appbug{
+  margin-bottom: 0;
+  background: transparent;
+  position: absolute;
+  /*top: 0;*/
+}
+.navbar-appbug a{
+  color: #fff;
+}
+.navbar-appbug a:hover,.navbar-appbug a:active,.navbar-appbug a:focus{
+  background-color: #6cf!important;
+  background-color:rgba(255,255,255,0.5)!important;
+}
+
+.logo{
+  background-color: #39f;
+  background: -webkit-linear-gradient(left, #39f, #6cf);
+  background: -moz-linear-gradient(left, #39f, #6cf);
+  background: -o-linear-gradient(left, #39f, #6cf);
+  background: -webkit-gradient(linear, 0 0, 100% 0, from(#39f), to(#6cf));
+  background: linear-gradient(left, #39f, #6cf);
+  text-align:center;
+  cursor: default;
+}
+.logo p{
+  font-size: 40px;
+  color: #fff;
+  height: 280px;
+  line-height: 280px;
+  margin-bottom: 0;
+}
+.logo sub{
+  font-size:11px;
+}
+
+
+.hcl-search-box{
+  margin-top: -3em;
+  background: #fefefe;
+  padding: 1em;
+  border: #4af solid 2px;
+  border-radius: 1em;
+}
+.form-group input{
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+.btn-appbug{
+  color: #fff;
+  background-color: #39f;
+}
+.btn-appbug:hover{
+  color: #fff;
+  background-color: #6cf;
+}
+
+
+
+html,body{
+  height: 100%;
+}
+.hcl-container{
+  min-height: 100%;
+  position: relative;
+  padding-bottom: 150px;
+  background: #efefef;
+}
+footer{
+  width: 100%;
+  height: 150px;
+  position: absolute;
+  padding-left: 15px;
+  padding-right: 15px;
+  bottom: 0;
+  /*background: #ccc;*/
+}
+footer hr{
+  border-color: #999;
+}
+
+
