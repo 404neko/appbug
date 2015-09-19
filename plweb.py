@@ -12,6 +12,7 @@ import requests
 import sqlite3
 import sys,os
 from Module.Fetch import *
+import copy
 
 #deal with coding
 #reload(sys)
@@ -46,13 +47,13 @@ def before_request():
 def teardown_request(exception):
     g.db.close()
 
-    
-    
-    
-    
+
+
+
+
 #>index
 @app.route('/',methods=["POST","GET"])
-def show_index(): 
+def show_index():
     keyword = request.form.get('title')
     if keyword:
         return redirect('/'+keyword)
@@ -65,8 +66,8 @@ def show_search(keyword):
     keyword = '%' + keyword + '%'
     cur = g.db.execute('''select app_name from app_id where app_name like '%s' order by app_name''' % keyword)
     search_list = [dict(app_name=row[0]) for row in cur.fetchall()]
-    return render_template('search_list.html', search_list = search_list)  
-""" 
+    return render_template('search_list.html', search_list = search_list)
+"""
 #q and db
 #@app.route('/s/<keyword>')
 #def show_search(keyword):
@@ -80,13 +81,71 @@ def show_search(keyword):
 def show_dx(appname):
     cur = g.db.execute("select COMMENTS, NUM from dx WHERE APP_NAME = '%s'  order by date desc limit 10" % appname)
     entries = [dict(COMMENTS=row[0], NUM=row[1]) for row in cur.fetchall()]
-    #return render_template('layout.html', entries=entries) 
+    #return render_template('layout.html', entries=entries)
     cur = g.db.execute("select VERSION, COMMENT,DATE from qg WHERE APP_NAME = '%s' order by DATE desc " % appname)
     qgs = [dict(VERSION=row[0], COMMENT=row[1], DATE=row[2]) for row in cur.fetchall()]
-    return render_template('layout.html', entries=entries, qgs=qgs) 
+    return render_template('layout.html', entries=entries, qgs=qgs)
 
-@app.route('/rank/',methods=["POST","GET"])
-def Query():
+def QueryTask(Val):
+    Results=[]
+    KeyWord=Val[0]
+    AppName=Val[1]
+    Results.append( GetWandoujia(KeyWord,AppName) )
+    Results.append( GetBaidu(KeyWord,AppName) )
+    Results.append( GetXiaomi(KeyWord,AppName) )
+    Results.append( GetTencent(KeyWord,AppName) )
+    Results.append( Get360(KeyWord,AppName) )
+    Results.append( GetAnzhi(KeyWord,AppName) )
+    Results.append( GetLenovo(KeyWord,AppName) )
+    return Results
+
+#      <p>应用<b>"{{AppName}}"</b>在关键词<b>"{{KeyWords}}"</b>结果的排名情况如下：</p>
+#      <div class="hcl-item-box">#
+#	  {{Results}}
+
+def sQuery(request):
+    KeyWord = request.form.get('word')
+    AppName = request.form.get('appname')
+    if not KeyWord:
+        KeyWord=request.args.get('word')
+        AppName=request.args.get('appname')
+    if KeyWord:
+        KeyWords=KeyWord.replace(u'，',',').split(',')
+        Kw4End=copy.deepcopy(KeyWords)
+        for i in range(0,len(KeyWords)):
+            KeyWords[i]=[KeyWords[i],AppName]
+        Results=map(QueryTask,KeyWords)
+        midRes={}
+        for ResultItem in Results:
+            for aResult in ResultItem:
+                if midRes.get(aResult['Store'],-1)==-1:
+                    midRes[aResult['Store']]={}
+                    midRes[aResult['Store']][aResult['KeyWord']]=aResult['Rank']
+                else:
+                    midRes[aResult['Store']][aResult['KeyWord']]=aResult['Rank']
+        html=u'<span>关键词</span>\n'
+        KwDict={}
+        for ShopName in midRes:
+            for Kws in midRes[ShopName]:
+                KwDict[Kws]=''
+            toAdd='<span>'+ShopName+'</span>\n'
+            html+=toAdd
+        html+='<br>'
+        for aKw in KwDict:
+            toAdd='<span>'+aKw+'</span>\n'
+            html+=toAdd
+            for ShopName in midRes:
+                Rank=midRes[ShopName].get(aKw,' ')
+                toAdd='<span>'+str(Rank)+'</span>\n'
+                html+=toAdd
+            html+='<br>'
+        html=html[:-4]
+        Kw4End_String=','.join(Kw4End)
+        return render_template('srank.html',KeyWords = Kw4End_String,AppName = AppName,Results=html)
+    else:
+        render_template('srank.html')
+
+def Query(request):
     KeyWord = request.form.get('word')
     AppName = request.form.get('appname')
     if not KeyWord:
@@ -113,10 +172,25 @@ def Query():
             result_rank.append( GetLenovo(KeyWord,AppName) )
         except:
             pass
-            
         return render_template('rank.html',result_rank = result_rank,KeyWord = KeyWord,AppName = AppName,Get50Host=Get50Host)
     else:
         return render_template('rank.html')
+
+@app.route('/rank/',methods=["POST","GET"])
+def Rank():
+    KeyWord = request.form.get('word')
+    AppName = request.form.get('appname')
+    if not KeyWord:
+        KeyWord=request.args.get('word')
+        AppName=request.args.get('appname')
+    if KeyWord:
+        if len(KeyWord.replace(u'，',',').split(','))==1:
+            return Query(request)
+        else:
+            return sQuery(request)
+    else:
+        return render_template('index.html')
+
 
 @app.route('/api/get50',methods=["POST","GET"])
 def Get50():
@@ -158,4 +232,5 @@ def Get50():
         return ''
 
 if __name__ == '__main__':
-    app.run(host='appbug.cn',port=80,threaded=True,debug=True)
+    app.run(host='appbug.cn',port=80,threaded=True)
+    #app.run(host='127.0.0.1',port=5000,threaded=True,debug=True)
