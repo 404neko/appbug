@@ -35,6 +35,10 @@
           <input class="form-control input-lg" type="text" value="{{KeyWord}}" size="30" name="word" placeholder="关键词"/>
           <input class="form-control input-lg" type="text" value="{{AppName}}" size="30" name="appname" placeholder="应用名称"/>
           <input class="btn btn-appbug btn-lg" type="submit" value="GO!"/>
+          <br>
+          {% autoescape false %}
+          {{Raw_Checkbox}}
+          {% endautoescape %}
         </div>
       </form>
     </div>

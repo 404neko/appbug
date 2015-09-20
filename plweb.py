@@ -58,7 +58,7 @@ def show_index():
     if keyword:
         return redirect('/'+keyword)
     else :
-        return render_template('index.html')
+        return render_template('index.html',Raw_Checkbox=Raw_Checkbox)
 #q
 """
 @app.route('/<keyword>',methods=["POST","GET"])
@@ -90,6 +90,11 @@ def QueryTask(Val):
     Results=[]
     KeyWord=Val[0]
     AppName=Val[1]
+    EnabledKey=Val[2]
+    result_rank = []
+    for aKey in EnabledKey:
+        result_rank.append( KeyList[aKey]['Fuction'](KeyWord,AppName) )
+    '''
     Results.append( GetWandoujia(KeyWord,AppName) )
     Results.append( GetBaidu(KeyWord,AppName) )
     Results.append( GetXiaomi(KeyWord,AppName) )
@@ -97,23 +102,24 @@ def QueryTask(Val):
     Results.append( Get360(KeyWord,AppName) )
     Results.append( GetAnzhi(KeyWord,AppName) )
     Results.append( GetLenovo(KeyWord,AppName) )
-    return Results
+    '''
+    return result_rank
 
 #      <p>应用<b>"{{AppName}}"</b>在关键词<b>"{{KeyWords}}"</b>结果的排名情况如下：</p>
 #      <div class="hcl-item-box">#
 #	  {{Results}}
 
-def sQuery(request):
+def sQuery(request,EnabledKey):
     KeyWord = request.form.get('word')
     AppName = request.form.get('appname')
-    if not KeyWord:
-        KeyWord=request.args.get('word')
-        AppName=request.args.get('appname')
+    #if not KeyWord:
+#        KeyWord=request.args.get('word')
+#        AppName=request.args.get('appname')
     if KeyWord:
         KeyWords=KeyWord.replace(u'，',',').split(',')
         Kw4End=copy.deepcopy(KeyWords)
         for i in range(0,len(KeyWords)):
-            KeyWords[i]=[KeyWords[i],AppName]
+            KeyWords[i]=[KeyWords[i],AppName,EnabledKey]
         Results=map(QueryTask,KeyWords)
         midRes={}
         for ResultItem in Results:
@@ -141,16 +147,16 @@ def sQuery(request):
             html+='<br>'
         html=html[:-4]
         Kw4End_String=','.join(Kw4End)
-        return render_template('srank.html',KeyWords = Kw4End_String,AppName = AppName,Results=html)
+        return render_template('srank.html',KeyWords = Kw4End_String,AppName = AppName,Results=html,Raw_Checkbox=Raw_Checkbox)
     else:
         render_template('srank.html')
 
-def Query(request):
+def Query(request,EnabledKey):
     KeyWord = request.form.get('word')
     AppName = request.form.get('appname')
-    if not KeyWord:
-        KeyWord=request.args.get('word')
-        AppName=request.args.get('appname')
+    #if not KeyWord:
+#        KeyWord=request.args.get('word')
+#        AppName=request.args.get('appname')
     if KeyWord:
         #+'\n'+GetLenovo(KeyWord,AppName)
         result_rank = []
@@ -163,6 +169,9 @@ def Query(request):
         result_rank.append( {'Store':u'百度3','Rank':617,'Key':'baidu','KeyWord':KeyWord} )
         '''
         try:
+            for aKey in EnabledKey:
+                result_rank.append( KeyList[aKey]['Fuction'](KeyWord,AppName) )
+                '''
             result_rank.append( GetWandoujia(KeyWord,AppName) )
             result_rank.append( GetBaidu(KeyWord,AppName) )
             result_rank.append( GetXiaomi(KeyWord,AppName) )
@@ -170,26 +179,32 @@ def Query(request):
             result_rank.append( Get360(KeyWord,AppName) )
             result_rank.append( GetAnzhi(KeyWord,AppName) )
             result_rank.append( GetLenovo(KeyWord,AppName) )
+            '''
         except:
             pass
-        return render_template('rank.html',result_rank = result_rank,KeyWord = KeyWord,AppName = AppName,Get50Host=Get50Host)
+        return render_template('rank.html',result_rank = result_rank,KeyWord = KeyWord,AppName = AppName,Get50Host=Get50Host,Raw_Checkbox=Raw_Checkbox)
     else:
         return render_template('rank.html')
 
-@app.route('/rank/',methods=["POST","GET"])
+@app.route('/rank/',methods=["POST"])
 def Rank():
     KeyWord = request.form.get('word')
     AppName = request.form.get('appname')
-    if not KeyWord:
-        KeyWord=request.args.get('word')
-        AppName=request.args.get('appname')
+    #if not KeyWord:
+    #    print '================================='
+    #    KeyWord=request.args.get('word')
+    #    AppName=request.args.get('appname')
+    EnabledKey=[]
+    for aKey in KeyList:
+        if request.form.get(aKey)!=None:
+            EnabledKey.append(aKey)
     if KeyWord:
         if len(KeyWord.replace(u'，',',').split(','))==1:
-            return Query(request)
+            return Query(request,EnabledKey)
         else:
-            return sQuery(request)
+            return sQuery(request,EnabledKey)
     else:
-        return render_template('index.html')
+        return render_template('index.html',Raw_Checkbox=Raw_Checkbox)
 
 
 @app.route('/api/get50',methods=["POST","GET"])
@@ -231,6 +246,32 @@ def Get50():
     else:
         return ''
 
+'''
+            result_rank.append( GetWandoujia(KeyWord,AppName) )
+            result_rank.append( GetBaidu(KeyWord,AppName) )
+            result_rank.append( GetXiaomi(KeyWord,AppName) )
+            result_rank.append( GetTencent(KeyWord,AppName) )
+            result_rank.append( Get360(KeyWord,AppName) )
+            result_rank.append( GetAnzhi(KeyWord,AppName) )
+            result_rank.append( GetLenovo(KeyWord,AppName) )
+            '''
+
 if __name__ == '__main__':
-    app.run(host='appbug.cn',port=80,threaded=True)
-    #app.run(host='127.0.0.1',port=5000,threaded=True,debug=True)
+    PluginInfo=[
+                {'StoreName':u'百度手机助手','Key':'baidu','Fuction':GetBaidu},
+                {'StoreName':u'乐商店','Key':'lenovo','Fuction':GetLenovo},
+                {'StoreName':u'安智市场','Key':'anzhi','Fuction':GetAnzhi},
+                {'StoreName':u'小米应用商店','Key':'mi','Fuction':GetXiaomi},
+                {'StoreName':u'360 手机助手','Key':'360','Fuction':Get360},
+                {'StoreName':u'豌豆荚','Key':'wandoujia','Fuction':GetWandoujia},
+                {'StoreName':u'应用宝','Key':'tencent','Fuction':GetTencent}
+                ]
+    Raw_Checkbox=''
+    KeyList={}
+    CheckBox='<label><input type="checkbox" checked="%s" value="1" class="form-checkbox" name="%s"><span>%s</span></label>'
+    for aPlugin in PluginInfo:
+        Raw_Checkbox+=CheckBox%('checked',aPlugin['Key'],aPlugin['StoreName'])
+        Raw_Checkbox+='\n'
+        KeyList[aPlugin['Key']]={'StoreName':aPlugin['StoreName'],'Fuction':aPlugin['Fuction']}
+    app.run(host='127.0.0.1',port=5000,threaded=True,debug=True)
+    #app.run(host='appbug.cn',port=80,threaded=True)
