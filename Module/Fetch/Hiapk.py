@@ -8,12 +8,12 @@ import sys,os
 import gzip
 from _Config import *
 
-def GetBaidu(KeyWord,AppName):
-	Url_0='http://m.baidu.com/s?&tn=native&ver=16785292&platform_version_id=18&st=10a0011&word='
+def GetHiapk(KeyWord,AppName):
+	Url_0='http://m.baidu.com/s?&tn=native&ver=16785373&platform_version_id=18&st=10a001&word='
 	Url_2='&pn='
-	StoreName=u'百度手机助手'
+	StoreName=u'安卓市场'
 	Page=0
-	Key='baidu'
+	Key='hiapk'
 	Magnification=1
 	Flag_End=0
 	Count=1
@@ -43,8 +43,8 @@ def GetBaidu(KeyWord,AppName):
 		Page+=1
 	return {'Store':StoreName,'Rank':None,'Key':Key,'KeyWord':KeyWord}
 
-def GetList_Baidu(KeyWord,Number=50):
-	Url_0='http://m.baidu.com/s?&tn=native&ver=16785292&platform_version_id=18&st=10a0011&word='
+def GetList_Hiapk(KeyWord,Number=50):
+	Url_0='http://m.baidu.com/s?&tn=native&ver=16785373&platform_version_id=18&st=10a001&word='
 	Url_2='&pn='
 	Page=0
 	Magnification=1

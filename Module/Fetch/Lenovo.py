@@ -32,7 +32,7 @@ def GetClientID(SendMesg=SendMesg):
 	Json=json.loads(Result.content)
 	Aim=Json['clientid']
 	return Aim
-{'StoreName':u'百度手机助手','Key':'baidu'},{'StoreName':u'乐商店','Key':'lenovo'},{'StoreName':u'百度手机助手','Key':'baidu'}
+
 def GetLenovo(KeyWord,AppName):
 	def NameUtil():
 		pass

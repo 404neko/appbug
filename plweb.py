@@ -160,27 +160,10 @@ def Query(request,EnabledKey):
     if KeyWord:
         #+'\n'+GetLenovo(KeyWord,AppName)
         result_rank = []
-        '''
-        result_rank.append( {'Store':'360','Rank':None,'Key':'360','KeyWord':KeyWord} )
-        result_rank.append( {'Store':'3607','Rank':None,'Key':'tencent','KeyWord':KeyWord} )
-        result_rank.append( {'Store':u'百度2','Rank':627,'Key':'baidu','KeyWord':KeyWord} )
-        result_rank.append( {'Store':'3607','Rank':None,'Key':'360','KeyWord':KeyWord} )
-        result_rank.append( {'Store':u'百度1','Rank':627,'Key':'mi','KeyWord':KeyWord} )
-        result_rank.append( {'Store':u'百度3','Rank':617,'Key':'baidu','KeyWord':KeyWord} )
-        '''
-        try:
+        if 1:#try:
             for aKey in EnabledKey:
                 result_rank.append( KeyList[aKey]['Fuction'](KeyWord,AppName) )
-                '''
-            result_rank.append( GetWandoujia(KeyWord,AppName) )
-            result_rank.append( GetBaidu(KeyWord,AppName) )
-            result_rank.append( GetXiaomi(KeyWord,AppName) )
-            result_rank.append( GetTencent(KeyWord,AppName) )
-            result_rank.append( Get360(KeyWord,AppName) )
-            result_rank.append( GetAnzhi(KeyWord,AppName) )
-            result_rank.append( GetLenovo(KeyWord,AppName) )
-            '''
-        except:
+        else:#except:
             pass
         return render_template('rank.html',result_rank = result_rank,KeyWord = KeyWord,AppName = AppName,Get50Host=Get50Host,Raw_Checkbox=Raw_Checkbox)
     else:
@@ -230,31 +213,15 @@ def Get50():
             return GetList_Tencent(KeyWord)
         if Key=='baidu':
             return GetList_Baidu(KeyWord)
+        if Key=='pp':
+            return GetList_PP(KeyWord)
+        if Key=='hiapk':
+            return GetList_Hiapk(KeyWord)
+        if Key=='meizu':
+            return GetList_Meizu(KeyWord)
         return ''
-        '''
-        FuctionDict={
-        'anzhi':GetList_Anzhi(KeyWord),
-        'lenovo':GetList_Lenovo(KeyWord),
-        '360':GetList_360(KeyWord),
-        'mi':GetList_Xiaomi(KeyWord),
-        'wandoujia':GetList_Wandoujia(KeyWord),
-        'tencent':GetList_Tencent(KeyWord),
-        'baidu':GetList_Baidu(KeyWord)
-        }
-        return FuctionDict[Key]
-        '''
     else:
         return ''
-
-'''
-            result_rank.append( GetWandoujia(KeyWord,AppName) )
-            result_rank.append( GetBaidu(KeyWord,AppName) )
-            result_rank.append( GetXiaomi(KeyWord,AppName) )
-            result_rank.append( GetTencent(KeyWord,AppName) )
-            result_rank.append( Get360(KeyWord,AppName) )
-            result_rank.append( GetAnzhi(KeyWord,AppName) )
-            result_rank.append( GetLenovo(KeyWord,AppName) )
-            '''
 
 if __name__ == '__main__':
     PluginInfo=[
@@ -264,7 +231,10 @@ if __name__ == '__main__':
                 {'StoreName':u'小米应用商店','Key':'mi','Fuction':GetXiaomi},
                 {'StoreName':u'360 手机助手','Key':'360','Fuction':Get360},
                 {'StoreName':u'豌豆荚','Key':'wandoujia','Fuction':GetWandoujia},
-                {'StoreName':u'应用宝','Key':'tencent','Fuction':GetTencent}
+                {'StoreName':u'应用宝','Key':'tencent','Fuction':GetTencent},
+                {'StoreName':u'PP 助手','Key':'pp','Fuction':GetPP},
+                {'StoreName':u'安卓市场','Key':'hiapk','Fuction':GetHiapk},
+                {'StoreName':u'魅族商店','Key':'meizu','Fuction':GetMeizu}
                 ]
     Raw_Checkbox=''
     KeyList={}
