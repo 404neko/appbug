@@ -2,6 +2,8 @@ from flask import Flask,session,redirect,url_for,escape,request,render_template,
 import os
 import hashlib
 import MySQLdb
+import time
+import json
 
 app = Flask(__name__)
 app.secret_key = 'A0ZrXUU]LWXX/,98GHJHJ~XHH!jm/jmN*)RT'
@@ -21,10 +23,24 @@ def favicon():
 
 @app.route('/dashboard')
 def DashBoard():
-    if ('uid' in session) and ('session' in session):
-        return LoginDashBoard(uid,'session');
+	V_uid=request.cookies.get('uid',False)
+	V_session=request.cookies.get('session',False)
+    if V_uid and V_session:
+        return LoginDashBoard(V_uid,V_session);
     else:
         return Login()
+
+def SetSession(V_uid,request):
+	UID=V_uid
+	IP=request.request.remote_addr
+	Date=int(time.time())
+	w_Time=24*60*60*2
+	SideLoad=json.dumps({})
+	SessionID=GetMD5(str(UID)+str(IP)+str(Date))
+	Cur=MySql.cursor()
+	Cur.execute('insert into session(session_id,uid,ip,date,w_time,side_load) values(%s,%s,%s,%s,%s,%s)'%(SessionID,UID,IP,Date,w_Time,SideLoad))
+	MySql.commit()
+	return SessionID,UID,IP,Date,w_Time,SideLoad
 
 @app.route('/loginprocess',methods=['GET', 'POST'])
 def LoginProcess():
@@ -34,13 +50,19 @@ def LoginProcess():
         UserName=request.form['username']
         PassWord=GetMD5(request.form['password']+Salt_Account_Password)
         Cur=MySql.cursor()
-        Cur.execute('SELECT password FROM account WHERE username=%s',(UserName,))
+        Cur.execute('SELECT password,uid FROM account WHERE username=%s',(UserName,))
         Qu=Cur.fetchall()
-        print Qu
-        if Qu[0][0]!=PassWord:
-            return render_template('loginbox.html',Msg='Error password or username.')
-        else:
-            return 'Nyan'
+        if Qu!=():
+			if Qu[0][0]!=PassWord:
+            	return render_template('loginbox.html',Msg='Error password or username.')
+        	else:
+				V_uid=Qu[0][1]
+				T=SetSession(V_uid,request)
+				S=''
+				for i in T:
+					S+=str(i)
+				return S
+
 
 @app.route('/login')
 def Login():
