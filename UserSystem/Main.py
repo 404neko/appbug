@@ -40,7 +40,7 @@ def SetSession(V_uid,request):
 	SessionID=GetMD5(str(UID)+str(IP)+str(Date))
 	Cur=MySql.cursor()
 
-	Cur.execute('insert into session(session_id,uid,ip,date,w_time,side_load) values(\'%s\',\'%s\',\'%s\',%s,\'%s\',\'%s\')'%(SessionID,UID,IP,Date,w_Time,SideLoad))
+	Cur.execute('insert into session(session_id,uid,ip,date,w_time,side_load) values(\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\')'%(SessionID,UID,IP,Date,w_Time,SideLoad))
 	MySql.commit()
 	return SessionID,UID,IP,Date,w_Time,SideLoad
 
