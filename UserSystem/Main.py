@@ -62,9 +62,6 @@ def LoginProcess():
 			else:
 				V_uid=Qu[0][1]
 				T=SetSession(V_uid,request)
-				print V_uid
-				print T
-				print type(V_uid)
 				response=app.make_response(redirect('/dashboard'))  
 				response.set_cookie('uid',value=str(T[1]))
 				response.set_cookie('session',value=str(T[0]))
