@@ -2,7 +2,7 @@ from flask import Flask,session,redirect,url_for,escape,request,render_template,
 import os
 import hashlib
 import MySQLdb
-import time
+import time,datetime
 import json
 
 app = Flask(__name__)
@@ -33,7 +33,7 @@ def DashBoard():
 def SetSession(V_uid,request):
 	UID=V_uid
 	IP=request.remote_addr
-	Date=time.time()
+	Date=datetime.now()
 	w_Time=24*60*60*2
 	SideLoad=json.dumps({})
 	SessionID=GetMD5(str(UID)+str(IP)+str(Date))
