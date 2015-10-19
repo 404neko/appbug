@@ -33,15 +33,17 @@ def LoginProcess():
     else:
         UserName=request.form['username']
         PassWord=GetMD5(request.form['password']+Salt_Account_Password)
-        Cur=MySql.connection.cursor()
-        Cur.execute('''SELECT password FROM account WHERE username=?''',UserName)
+        Cur=MySql.cursor()
+        Cur.execute('SELECT password FROM account WHERE username=%s',(UserName,))
         Qu=Cur.fetchall()
-        return str(Qu)
-
+		if Qu[0][0]!=PassWord:
+			return render_template('loginbox.html',Msg='Error password or username.')
+		else:
+			return 'Nyan'
 
 
 @app.route('/login')
 def Login():
     return render_template('loginbox.html')
 
-app.run(debug=True)
+app.run(debug=True,host='0.0.0.0')
