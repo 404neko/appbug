@@ -1,14 +1,14 @@
 from flask import Flask,session,redirect,url_for,escape,request,render_template,send_from_directory
 import os
 import hashlib
-from flask.ext.mysqldb import MySQL
+import MySQLdb
 
 app = Flask(__name__)
 app.secret_key = 'A0ZrXUU]LWXX/,98GHJHJ~XHH!jm/jmN*)RT'
 
 Salt_Account_Password='appbug_X/,9'
 
-MySql=MySQL(app,MYSQL_USER='root',MYSQL_PASSWORD='appbug0',MYSQL_DB='account')
+MySql=MySQLdb.connect('localhost','root','appbug0','data')
 
 def GetMD5(Data):
 	Hash=hashlib.md5()
