@@ -36,7 +36,7 @@ def LoginProcess():
         Cur=MySql.cursor()
         Cur.execute('SELECT password FROM account WHERE username=%s',(UserName,))
         Qu=Cur.fetchall()
-		print Qu
+        print Qu
         if Qu[0][0]!=PassWord:
             return render_template('loginbox.html',Msg='Error password or username.')
         else:
