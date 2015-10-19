@@ -2,8 +2,9 @@ from flask import Flask,session,redirect,url_for,escape,request,render_template,
 import os
 import hashlib
 import MySQLdb
-import time,datetime
+import time
 import json
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'A0ZrXUU]LWXX/,98GHJHJ~XHH!jm/jmN*)RT'
