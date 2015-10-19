@@ -8,7 +8,7 @@ app.secret_key = 'A0ZrXUU]LWXX/,98GHJHJ~XHH!jm/jmN*)RT'
 
 Salt_Account_Password='appbug_X/,9'
 
-MySql=MySQL(app,MYSQL_USER='root','MYSQL_PASSWORD'='appbug0','MYSQL_DB'='account')
+MySql=MySQL(app,MYSQL_USER='root',MYSQL_PASSWORD='appbug0',MYSQL_DB='account')
 
 def GetMD5(Data):
 	Hash=hashlib.md5()
