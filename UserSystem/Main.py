@@ -22,6 +22,9 @@ def GetMD5(Data):
 def favicon():
 	return send_from_directory(os.path.join(app.root_path,'static'),'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
+def LoginDashBoard(V_uid,V_session):
+	return V_uid+V_session
+
 @app.route('/dashboard')
 def DashBoard():
 	V_uid=request.cookies.get('uid',False)
@@ -39,7 +42,6 @@ def SetSession(V_uid,request):
 	SideLoad=json.dumps({})
 	SessionID=GetMD5(str(UID)+str(IP)+str(Date))
 	Cur=MySql.cursor()
-
 	Cur.execute('insert into session(session_id,uid,ip,date,w_time,side_load) values(\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\')'%(SessionID,UID,IP,Date,w_Time,SideLoad))
 	MySql.commit()
 	return SessionID,UID,IP,Date,w_Time,SideLoad
@@ -60,10 +62,10 @@ def LoginProcess():
 			else:
 				V_uid=Qu[0][1]
 				T=SetSession(V_uid,request)
-				S=''
-				for i in T:
-					S+=str(i)
-				return S
+				response=app.make_response(redirect('/dashboard'))  
+				response.set_cookie('uid',value=V_uid)
+				response.set_cookie('session',value=T[0])
+				return response
 
 
 @app.route('/login')
