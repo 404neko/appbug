@@ -32,7 +32,7 @@ def DashBoard():
 
 def SetSession(V_uid,request):
 	UID=V_uid
-	IP=request.request.remote_addr
+	IP=request.remote_addr
 	Date=int(time.time())
 	w_Time=24*60*60*2
 	SideLoad=json.dumps({})
