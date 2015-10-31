@@ -1,0 +1,26 @@
+<html>
+	<head>
+	<meta charset="utf-8">
+	<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+	</head>
+	<body>
+		<form action="/regprocess" method="post">
+		用户名:
+		<input type="text" value="{{ sUserName | default(' ') }}" name="username">
+		<br />
+		密码:
+		<input type="password" name="password">
+		<br />
+		重复密码:
+		<input type="password" name="passwordagain">
+		<br />
+		邮箱:
+		<input type="text" value="{{ sMail | default(' ') }}" name="mail">
+		<p>
+		<input type="submit" value="注册" />
+			{{ Msg | default(' ') }}
+		</p>
+		<!--<input type="checkbox" name="remember">  -->
+		</form>
+	</body>
+</html>
